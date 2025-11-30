@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import authService from '../services/authService';
 
 const AuthContext = createContext(null);
 
@@ -8,19 +9,34 @@ export function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const checkAuth = () => {
+        const checkAuth = async () => {
             try {
-                const storedUser = localStorage.getItem('user');
-                const storedToken = localStorage.getItem('token');
-                
-                if (storedUser && storedToken) {
-                    setUser(JSON.parse(storedUser));
+                try {
+                    await authService.refreshToken();
+                } catch (error) {
+                    localStorage.removeItem('user');
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    setIsLoading(false);
+                    return;
+                }
+
+                try {
+                    const response = await authService.getCurrentUser();
+                    const userData = response.user || response;
+                    setUser(userData);
                     setIsAuthenticated(true);
+                    localStorage.setItem('user', JSON.stringify(userData));
+                } catch (error) {
+                    localStorage.removeItem('user');
+                    setUser(null);
+                    setIsAuthenticated(false);
                 }
             } catch (error) {
                 console.error('Error checking authentication:', error);
                 localStorage.removeItem('user');
-                localStorage.removeItem('token');
+                setUser(null);
+                setIsAuthenticated(false);
             } finally {
                 setIsLoading(false);
             }
@@ -29,10 +45,9 @@ export function AuthProvider({ children }) {
         checkAuth();
     }, []);
 
-    const login = (userData, token) => {
+    const login = (userData) => {
         try {
             localStorage.setItem('user', JSON.stringify(userData));
-            localStorage.setItem('token', token);
             setUser(userData);
             setIsAuthenticated(true);
         } catch (error) {
@@ -41,14 +56,22 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
         try {
+            try {
+                await authService.logout();
+            } catch (error) {
+                console.error('Error calling logout API:', error);
+            }
+            
             localStorage.removeItem('user');
-            localStorage.removeItem('token');
             setUser(null);
             setIsAuthenticated(false);
         } catch (error) {
             console.error('Error during logout:', error);
+            localStorage.removeItem('user');
+            setUser(null);
+            setIsAuthenticated(false);
         }
     };
 

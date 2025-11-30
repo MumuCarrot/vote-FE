@@ -23,11 +23,11 @@ function Header() {
                 <Link to="/" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
                     Home
                 </Link>
-                <Link to="/auth/login" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
+                <Link to="/votes" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
                     Votes
                 </Link>
                 <Link to="/auth/login" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
-                    About
+                    Create
                 </Link>
             </nav>
             
