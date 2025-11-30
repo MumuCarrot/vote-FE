@@ -26,7 +26,7 @@ function Header() {
                 <Link to="/votes" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
                     Votes
                 </Link>
-                <Link to="/auth/login" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
+                <Link to="/votes/create" className="text-gray-800 font-medium py-2 px-4 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline">
                     Create
                 </Link>
             </nav>
@@ -35,7 +35,7 @@ function Header() {
                 {isAuthenticated ? (
                     <>
                         <Link 
-                            to={`/profile/${user?.uid || user?.id}`}
+                            to="/profile"
                             className="text-gray-800 font-medium py-2 px-5 rounded transition-all hover:bg-gray-100 hover:text-blue-600 no-underline inline-block"
                         >
                             Profile

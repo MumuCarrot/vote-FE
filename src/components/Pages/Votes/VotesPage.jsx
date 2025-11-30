@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
-import voteService from '../../../services/voteService';
+import electionService from '../../../services/electionService';
 
 function VotesPage() {
     const navigate = useNavigate();
@@ -18,8 +18,8 @@ function VotesPage() {
         try {
             setIsLoading(true);
             setError('');
-            const response = await voteService.getVotes();
-            setVotes(response.votes || response || []);
+            const response = await electionService.getElections();
+            setVotes(response.elections || response || []);
         } catch (err) {
             setError(err.message || 'Failed to load votes');
             setVotes([]);

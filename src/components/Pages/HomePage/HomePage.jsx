@@ -35,7 +35,7 @@ function HomePage() {
                     ) : (
                         <div className="flex gap-4 justify-center">
                             <button
-                                onClick={() => navigate('/')}
+                                onClick={() => navigate('/votes')}
                                 className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                             >
                                 View Active Votes
@@ -168,7 +168,7 @@ function HomePage() {
                     ) : (
                         <div className="flex gap-4 justify-center">
                             <button
-                                onClick={() => navigate('/')}
+                                onClick={() => navigate('/votes')}
                                 className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                             >
                                 Explore Votes
