@@ -4,7 +4,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 
 function Header() {
     const navigate = useNavigate();
-    const { isAuthenticated, user, logout } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
 
     const handleLogout = () => {
         logout();
