@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import electionService from '../../../services/electionService';
@@ -23,11 +23,16 @@ function VotePage() {
         candidates: [],
     });
 
-    useEffect(() => {
-        fetchElection();
-    }, [id, isAuthenticated]);
+    const fetchResults = useCallback(async () => {
+        try {
+            const resultsData = await electionService.getElectionResults(id);
+            setResults(resultsData);
+        } catch (err) {
+            console.error('Failed to load results:', err);
+        }
+    }, [id]);
 
-    const fetchElection = async () => {
+    const fetchElection = useCallback(async () => {
         try {
             setIsLoading(true);
             setError('');
@@ -63,16 +68,11 @@ function VotePage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [id, isAuthenticated, fetchResults]);
 
-    const fetchResults = async () => {
-        try {
-            const resultsData = await electionService.getElectionResults(id);
-            setResults(resultsData);
-        } catch (err) {
-            console.error('Failed to load results:', err);
-        }
-    };
+    useEffect(() => {
+        fetchElection();
+    }, [fetchElection]);
 
     const isElectionStarted = (electionData) => {
         if (!electionData.start_date) return true; // If no start date, consider it started

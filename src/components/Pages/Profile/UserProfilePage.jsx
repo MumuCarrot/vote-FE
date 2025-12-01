@@ -7,7 +7,7 @@ import electionService from '../../../services/electionService';
 
 function UserProfilePage() {
     const navigate = useNavigate();
-    const { user, isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [userData, setUserData] = useState(null);
     const [profile, setProfile] = useState(null);
     const [votes, setVotes] = useState([]);
