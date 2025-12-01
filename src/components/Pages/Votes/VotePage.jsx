@@ -75,7 +75,7 @@ function VotePage() {
     }, [fetchElection]);
 
     const isElectionStarted = (electionData) => {
-        if (!electionData.start_date) return true; // If no start date, consider it started
+        if (!electionData.start_date) return true;
         return new Date() >= new Date(electionData.start_date);
     };
 
