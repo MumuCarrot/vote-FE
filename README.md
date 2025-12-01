@@ -41,6 +41,35 @@ npm run build
 
 The build output will be placed in the `build` directory and can be served by any static file server or integrated with your backend.
 
+## Run with Docker
+
+You can build and run this React application inside a Docker container using the provided `Dockerfile`.
+
+### Build Docker image
+
+From the project root (where `Dockerfile` is located), run:
+
+```bash
+docker build -t vote-fe .
+```
+
+### Run Docker container
+
+To start a container and expose the app on `http://localhost:3000`:
+
+```bash
+docker run -p 3000:80 --name vote-fe-container vote-fe
+```
+
+### Stop and remove container
+
+To stop and remove the running container:
+
+```bash
+docker stop vote-fe-container
+docker rm vote-fe-container
+```
+
 ## Running tests
 
 The project uses Jest and React Testing Library (already configured by Create React App) together with the tests added in `src/components`, `src/contexts`, and `src/services`.
