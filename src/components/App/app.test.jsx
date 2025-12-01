@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import App from './app.jsx';
 import { AuthProvider } from '../../contexts/AuthContext.jsx';
 
-// Mock react-router-dom so Jest does not need the real implementation
 jest.mock('react-router-dom', () => {
     const React = require('react');
     const navigateMock = jest.fn();
@@ -17,7 +16,6 @@ jest.mock('react-router-dom', () => {
     };
 });
 
-// Mock axios to avoid Jest trying to execute ESM axios implementation
 jest.mock('axios', () => ({
     create: () => ({
         interceptors: { response: { use: jest.fn() } },
@@ -32,7 +30,6 @@ describe('App', () => {
             </AuthProvider>
         );
 
-        // Header title from Layout/Header
         expect(screen.getByText(/Elector/i)).toBeInTheDocument();
     });
 });

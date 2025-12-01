@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Header from './header.jsx';
 
-// Mocks
 const mockUseAuth = jest.fn();
 const mockUseNavigate = jest.fn();
 

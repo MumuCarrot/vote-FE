@@ -35,12 +35,10 @@ function UserProfilePage() {
             setIsLoading(true);
             setError('');
 
-            // Fetch user info
             const userResponse = await authService.getCurrentUser();
             const userInfo = userResponse.user || userResponse;
             setUserData(userInfo);
 
-            // Fetch profile
             const profileData = await userProfileService.getMyProfile();
             setProfile(profileData);
             
@@ -52,14 +50,12 @@ function UserProfilePage() {
                 });
             }
 
-            // Fetch user votes
             if (userInfo.id || userInfo._id) {
                 try {
                     const votesData = await userProfileService.getUserVotes(userInfo.id || userInfo._id);
                     const votesArray = Array.isArray(votesData) ? votesData : [];
                     setVotes(votesArray);
                     
-                    // Fetch election and candidate details for each vote
                     const votesDetails = await Promise.all(
                         votesArray.map(async (vote) => {
                             try {
@@ -107,10 +103,8 @@ function UserProfilePage() {
         try {
             let updatedProfile;
             if (profile) {
-                // Update existing profile
                 updatedProfile = await userProfileService.updateProfile(profileForm);
             } else {
-                // Create new profile
                 updatedProfile = await userProfileService.createProfile({
                     user_id: userData.id || userData._id,
                     ...profileForm,
