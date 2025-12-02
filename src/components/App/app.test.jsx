@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from './app.jsx';
 import { AuthProvider } from '../../contexts/AuthContext.jsx';
 
@@ -23,14 +23,16 @@ jest.mock('axios', () => ({
 }));
 
 describe('App', () => {
-    test('renders main layout without crashing', () => {
+    test('renders main layout without crashing', async () => {
         render(
             <AuthProvider>
                 <App />
             </AuthProvider>
         );
 
-        expect(screen.getByText(/Elector/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText(/Elector/i)).toBeInTheDocument();
+        });
     });
 });
 
