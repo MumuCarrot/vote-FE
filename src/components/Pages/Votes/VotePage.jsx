@@ -86,8 +86,7 @@ function VotePage() {
 
     const isOwner = () => {
         if (!user || !election) return false;
-        return user.id === election.owner_id || user._id === election.owner_id || 
-               user.id === election.owner?.id || user._id === election.owner?._id;
+        return user.id === election.owner_id;
     };
 
     const canEditSettings = () => {
@@ -175,12 +174,44 @@ function VotePage() {
         }
     };
 
+    const handleDeleteElection = async () => {
+        if (!isOwner() || !election) return;
+
+        if (isElectionStarted(election)) {
+            setError('You can delete the election only before it starts');
+            return;
+        }
+
+        const confirmed = window.confirm('Are you sure you want to delete this election? This action cannot be undone.');
+        if (!confirmed) return;
+
+        setIsSubmitting(true);
+        setError('');
+
+        try {
+            await electionService.deleteElection(id);
+            navigate('/votes');
+        } catch (err) {
+            const errorMessage = err.response?.data?.detail || err.message || 'Failed to delete election';
+            setError(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleUpdateSettings = async () => {
-        if (!settingsForm.title.trim()) {
+        const trimmedTitle = (settingsForm.title || '').trim();
+
+        if (!trimmedTitle) {
             setError('Title is required');
             return;
         }
-        if (settingsForm.candidates.filter(c => c.name.trim()).length < 2) {
+
+        const candidatesWithNames = settingsForm.candidates.filter(
+            (c) => (c.name || '').trim()
+        );
+
+        if (candidatesWithNames.length < 2) {
             setError('At least 2 candidates are required');
             return;
         }
@@ -190,16 +221,14 @@ function VotePage() {
 
         try {
             const updateData = {
-                title: settingsForm.title,
+                title: trimmedTitle,
                 description: settingsForm.description || null,
                 start_date: settingsForm.start_date || null,
                 end_date: settingsForm.end_date || null,
-                candidates: settingsForm.candidates
-                    .filter(c => c.name.trim())
-                    .map(c => ({
-                        name: c.name.trim(),
-                        description: c.description.trim() || null,
-                    })),
+                candidates: candidatesWithNames.map((c) => ({
+                    name: (c.name || '').trim(),
+                    description: (c.description || '').trim() || null,
+                })),
             };
 
             await electionService.updateElection(id, updateData);
@@ -299,12 +328,20 @@ function VotePage() {
 
                     {/* Owner Actions */}
                     {owner && canEdit && (
-                        <div className="mt-4 pt-4 border-t">
+                        <div className="mt-4 pt-4 border-t flex flex-wrap gap-3">
                             <button
                                 onClick={() => setShowSettings(!showSettings)}
                                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                             >
                                 {showSettings ? 'Hide Settings' : 'Edit Election Settings'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDeleteElection}
+                                disabled={isSubmitting}
+                                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {isSubmitting ? 'Deleting...' : 'Delete Election'}
                             </button>
                         </div>
                     )}

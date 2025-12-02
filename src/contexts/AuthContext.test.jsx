@@ -1,17 +1,22 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { AuthProvider, useAuth } from './AuthContext.jsx';
-import authService from '../services/authService';
 
 jest.mock('../services/authService', () => ({
-    refreshToken: jest.fn(),
-    getCurrentUser: jest.fn(),
-    logout: jest.fn(),
+    refreshToken: jest.fn().mockResolvedValue({}),
+    getCurrentUser: jest.fn().mockRejectedValue(new Error('No user')),
+    logout: jest.fn().mockResolvedValue({}),
 }));
 
-function setupHook() {
+async function setupHook() {
     const wrapper = ({ children }) => <AuthProvider>{children}</AuthProvider>;
-    return renderHook(() => useAuth(), { wrapper });
+    const hookResult = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => {
+        expect(hookResult.result.current.isLoading).toBe(false);
+    });
+
+    return hookResult;
 }
 
 describe('AuthContext', () => {
@@ -20,9 +25,9 @@ describe('AuthContext', () => {
         localStorage.clear();
     });
 
-    test('login saves user and sets isAuthenticated', () => {
+    test('login saves user and sets isAuthenticated', async () => {
         const userData = { id: 1, email: 'test@example.com' };
-        const { result } = setupHook();
+        const { result } = await setupHook();
 
         act(() => {
             result.current.login(userData);
@@ -34,10 +39,8 @@ describe('AuthContext', () => {
     });
 
     test('logout clears user and isAuthenticated', async () => {
-        authService.logout.mockResolvedValueOnce({});
-
         const userData = { id: 1, email: 'test@example.com' };
-        const { result } = setupHook();
+        const { result } = await setupHook();
 
         act(() => {
             result.current.login(userData);
@@ -52,11 +55,11 @@ describe('AuthContext', () => {
         expect(localStorage.getItem('user')).toBeNull();
     });
 
-    test('updateUser merges and persists user data', () => {
+    test('updateUser merges and persists user data', async () => {
         const userData = { id: 1, email: 'test@example.com', name: 'Old' };
         const updated = { name: 'New' };
 
-        const { result } = setupHook();
+        const { result } = await setupHook();
 
         act(() => {
             result.current.login(userData);
